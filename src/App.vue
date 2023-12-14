@@ -3,9 +3,13 @@
     <figure>
       <img src="/vueschool-logo.png" alt="VueSchool Logo" />
     </figure>
-    <h1>Wise Quotes</h1>
+    <h1>Random Wise Quotes</h1>
+
     <button @click="sortQuotes">Sort rating by: {{ sortOrder }}</button>
-    <button @click="loadMore" :disabled="!quotes.length">Load more</button>
+    <button @click="refreshQuotes" :disabled="!quotes.length">
+      Get New Quotes
+    </button>
+
     <TransitionGroup name="list" tag="ul">
       <li v-for="quote in quotes" :key="quote._id">
         <span>Rating: {{ quote.rating }}</span>
@@ -19,36 +23,37 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted } from "vue";
 
 const quotes = ref([]);
+
 const fetchQuotes = async () => {
-  const response = await fetch('https://api.quotable.io/quotes?limit=10');
+  const response = await fetch("https://api.quotable.io/quotes/random?limit=5");
   const data = await response.json();
-  quotes.value = data.results.map((quote) => ({
+  quotes.value = data.map((quote) => ({
     ...quote,
     rating: Math.floor(Math.random() * 20) + 1,
   }));
+};
+
+const refreshQuotes = () => {
+  fetchQuotes();
 };
 
 onMounted(() => {
   fetchQuotes();
 });
 
-const sortOrder = ref('desc');
+const sortOrder = ref("desc");
 
 const sortQuotes = () => {
-  if (sortOrder.value === 'desc') {
+  if (sortOrder.value === "desc") {
     quotes.value.sort((a, b) => b.rating - a.rating);
-    sortOrder.value = 'asc';
+    sortOrder.value = "asc";
   } else {
     quotes.value.sort((a, b) => a.rating - b.rating);
-    sortOrder.value = 'desc';
+    sortOrder.value = "desc";
   }
-};
-
-const loadMore = () => {
-  fetchQuotes();
 };
 </script>
 
@@ -77,9 +82,7 @@ h1 {
 button {
   margin-bottom: 10px;
   background-color: #00bda7;
-  display: block;
-  padding-left: auto;
-  padding-right: auto;
+  margin: 5px;
 }
 
 button:hover {
@@ -103,6 +106,7 @@ li {
   overflow: hidden;
   border-radius: 1rem;
   max-width: 600px;
+  width: 100%;
   border-color: white;
   border: 1px;
   position: relative;
