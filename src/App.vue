@@ -5,7 +5,9 @@
     </figure>
     <h1>Random Wise Quotes</h1>
 
-    <button @click="sortQuotes">Sort rating by: {{ sortOrder }}</button>
+    <button @click="sortQuotes">
+      Sort By Rating ({{ sortOrder.toUpperCase() }})
+    </button>
     <button @click="refreshQuotes" :disabled="!quotes.length">
       Get New Quotes
     </button>
